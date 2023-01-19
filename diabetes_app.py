@@ -1,12 +1,9 @@
-import pandas as pd
-import streamlit as st
+
 import numpy as np
+import pickle
+import streamlit as st
 import matplotlib as plt
 import seaborn as sns
-from PIL import Image
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import  RandomForestClassifier
-from sklearn.metrics import accuracy_score
 
 df= pd.read_csv("diabetes.csv")
 
@@ -15,73 +12,62 @@ st.sidebar.header("Paitent Data")
 st.subheader("Description Statistics of Data")
 st.write(df.describe())
 
-# Data Split
-X= df.drop(['Outcome'], axis=1)
-y= df.iloc[ :, -1]
-X_train, X_test, y_train, y_test= train_test_split(X, y, train_size= 0.8, random_state=0)
 
-# Function
-def user_report():
-    pregnancies= st.sidebar.slider("Pregnancies", 0, 17, 2)
-    glucose= st.sidebar.slider("Glucose", 0, 199, 110)
-    bp= st.sidebar.slider("BloodPressure", 0, 122, 80)
-    sk= st.sidebar.slider("SkinThikness", 0, 99, 12)
-    insulin= st.sidebar.slider("Insulin", 0, 846, 80)
-    bmi= st.sidebar.slider("BMI", 0, 67, 5)
-    dpf= st.sidebar.slider("DiabetesPedigreeFunction", 0.07, 2.42, 0.37)
-    age= st.sidebar.slider("Age", 21, 81, 33)
+# loading the saved model
+loaded_model = pickle.load(open('diabetesmodel.pkl', 'rb'))
 
-    user_report_data= {
-        "pregnancies" : pregnancies,
-        "glucose" : glucose,
-        "bp" : bp,
-        "sk" : sk,
-        "insulin" : insulin,
-        "bmi" : bmi,
-        "dpf" : dpf,
-        "age" : age
-    }
-    report_data= pd.DataFrame(user_report_data, index=[0])
-    return report_data
 
-# Patient data
-user_data= user_report()
-st.subheader("Patient Data")
-st.write("user_data")
+#creating a function for prediction
 
-# Model
-rc= RandomForestClassifier()
-rc.fit(X_train, y_train)
-user_result= rc.predict(user_data)
+def diabetes_prediction(input_data):
 
-# Data Visulaization
-st.title("Visualization Patient Data")
+    # changing the input_data to numpy array
+    input_data_as_numpy_array = np.asarray(input_data)
 
-# Color Function
-if user_result[0]==0:
-    color= 'blue'
-else:
-    color= 'red'
+    # reshape the array as we are predicting for one instance
+    input_data_reshaped = input_data_as_numpy_array.reshape(1,-1)
 
-# Age VS Pregnancies
-st.header("Pregnancies Count (Others vs Yours)")
-fig_preg= plt.figure()
-ax1= sns.scatterplot(x= 'Age', y= 'Pregnancies', data= df, hue= 'Outcome', palette= "Greens")
-ax2= sns.scatterplot(x= user_result['age'], y= user_data['pregnancies'], s= 150, color= color)
-plt.xticks(np.arange(10, 100, 5))
-plt.yticks(np.arange(0, 20, 2))
-plt.title("0 - Healthy & 1 - Diabetoc")
-st.pyplot(fig_preg)
 
-# Output
-st.header("Your Report: ")
-output= ''
-if user_result[0]==0:
-    output= "You are Healthy"
-    st.balloons()
-else:
-    output= "You are Diabetic So Don't Eat Sweet"
-    st.warning("Sugar", "Sugar", "Sugar")
-    st.title(output)
-    st.subheader("Accuracy: ")
-    st.subheader(str(accuracy_score(y_test, rc.predict(X_test))*100 +"%"))
+
+
+
+    prediction = loaded_model.predict(input_data_reshaped)
+
+
+    if (prediction[0] == 0):
+      return('The person is not diabetic.')
+    else:
+      return('The person is diabetic.')
+  
+def main():
+    #give a title
+    st.title('Diabetes Prediction Web App')
+    
+    							
+    
+    #getting the input from the user
+    
+    Pregnancies = st.text_input('No. of Pregnancies')
+    Glucose = st.text_input('Blood Glucose Level')
+    BloodPressure = st.text_input('Blood Pressure')
+    SkinThickness = st.text_input('Skin Thickness')
+    Insulin = st.text_input('Insulin Level')
+    BMI = st.text_input('BMI')
+    DiabetesPedigreeFunction = st.text_input('Diabetes Pedigree Function Value')
+    Age = st.text_input('Age of the Person')
+    
+    #code for prediction
+    diagnosis = ''
+    
+    #creating a button for prediction
+    
+    if st.button('Diabetes Test Result'):
+        diagnosis = diabetes_prediction([Pregnancies, Glucose, BloodPressure,SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age ])
+    
+    st.success(diagnosis)
+    
+    
+    
+if __name__ == '__main__':
+    main()
+  
