@@ -17,7 +17,7 @@ st.write(df.describe())
 
 # Data Split
 X= df.drop(['Outcome'], axis=1)
-y= df.iloc[:, -1]
+y= df.iloc[ :, -1]
 X_train, X_test, y_train, y_test= train_test_split(X, y, train_size= 0.8, random_state=0)
 
 # Function
@@ -44,8 +44,9 @@ def user_report():
     report_data= pd.DataFrame(user_report_data, index=[0])
     return report_data
 
+# Patient data
 user_data= user_report()
-st.subheader ("Patient Data")
+st.subheader("Patient Data")
 st.write("user_data")
 
 # Model
@@ -77,8 +78,10 @@ st.header("Your Report: ")
 output= ''
 if user_result[0]==0:
     output= "You are Healthy"
+    st.balloons()
 else:
     output= "You are Diabetic So Don't Eat Sweet"
     st.warning("Sugar", "Sugar", "Sugar")
     st.title(output)
+    st.subheader("Accuracy: ")
     st.subheader(str(accuracy_score(y_test, rc.predict(X_test))*100 +"%"))
