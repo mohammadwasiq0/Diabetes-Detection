@@ -1,0 +1,2 @@
+# Diabetic-Project
+Streamlit
