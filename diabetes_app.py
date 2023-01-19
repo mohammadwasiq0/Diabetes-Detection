@@ -5,14 +5,6 @@ import streamlit as st
 import matplotlib as plt
 import seaborn as sns
 
-df= pd.read_csv("diabetes.csv")
-
-st.title("Diabetes Prediction App by Mohammad Wasiq")
-st.sidebar.header("Paitent Data")
-st.subheader("Description Statistics of Data")
-st.write(df.describe())
-
-
 # loading the saved model
 loaded_model = pickle.load(open('diabetesmodel.pkl', 'rb'))
 
