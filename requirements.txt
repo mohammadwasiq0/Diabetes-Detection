@@ -7,3 +7,4 @@ plotly
 streamlit
 streamlit_pandas_profiling
 pipreqs
+pickle
