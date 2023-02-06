@@ -1,5 +1,3 @@
-
-
 import numpy as np
 import pickle
 import streamlit as st
@@ -7,7 +5,6 @@ import streamlit as st
 #loading the saved model
 
 loaded_model = pickle.load(open('diabetesmodel.pkl', 'rb'))
-
 
 #creating a function for prediction
 
@@ -19,12 +16,7 @@ def diabetes_prediction(input_data):
     # reshape the array as we are predicting for one instance
     input_data_reshaped = input_data_as_numpy_array.reshape(1,-1)
 
-
-
-
-
     prediction = loaded_model.predict(input_data_reshaped)
-
 
     if (prediction[0] == 0):
       return('The person is not diabetic.')
@@ -34,9 +26,7 @@ def diabetes_prediction(input_data):
 def main():
     #give a title
     st.title('Diabetes Prediction Web App by Mohammad Wasiq')
-    
-    							
-    
+        						    
     #getting the input from the user
     
     Pregnancies = st.text_input('No. of Pregnancies')
@@ -57,33 +47,8 @@ def main():
         diagnosis = diabetes_prediction([Pregnancies, Glucose, BloodPressure,SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age ])
     
     st.success(diagnosis)
-    
-    
-    
+            
 if __name__ == '__main__':
     main()
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+ 
